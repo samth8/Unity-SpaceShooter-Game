@@ -4,10 +4,11 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 
 
-public class GameController : MonoBehaviour {
+public class GameController : MonoBehaviour
+{
 
     public GameObject[] hazards;
-    
+
     public Vector3 spawnValues;
     public int hazardCount;
     public float spawnWait;
@@ -15,19 +16,21 @@ public class GameController : MonoBehaviour {
     public float waitWave;
 
     public GUIText scoreText;
-    public GUIText restartText;
+    public GUIText functionText;
     public GUIText gameOverText;
 
-    
+
     private int score;
     private bool gameOver;
     private bool restart;
+    private bool pause;
+
     void Start()
     {
-      
         gameOver = false;
         restart = false;
-        restartText.text = "";
+        pause = false;
+        functionText.text = "";
         gameOverText.text = "";
         score = 0;
         UpdateScore();
@@ -35,13 +38,30 @@ public class GameController : MonoBehaviour {
     }
     void Update()
     {
-       
+        if (Input.GetKeyDown(KeyCode.P) && !restart)
+        {
+            if (!pause)
+            {
+                Time.timeScale = 0.0f;
+                functionText.text = "Press 'P' for Unpause";
+
+            }
+            else
+            {
+                Time.timeScale = 1.0f;
+                functionText.text = "";
+            }
+            pause = !pause;
+        }
+
+
+
         if (restart)
         {
-           
+
             if (Input.GetKeyDown(KeyCode.R))
             {
-              
+
                 // Application.LoadLevel(Application.loadedLevel);
                 SceneManager.LoadScene("Main");
             }
@@ -61,7 +81,7 @@ public class GameController : MonoBehaviour {
                 Vector3 spawnPosition = new Vector3(Random.Range(-spawnValues.x, spawnValues.x), spawnValues.y, spawnValues.z);
                 Quaternion spawnRotation = Quaternion.identity;
 
-              
+
                 Instantiate(hazard, spawnPosition, spawnRotation);
                 yield return new WaitForSeconds(spawnWait);
             }
@@ -70,14 +90,18 @@ public class GameController : MonoBehaviour {
 
             if (gameOver)
             {
-                restartText.text = "Press 'R' for Restart";
+                functionText.text = "Press 'R' for Restart";
                 restart = true;
                 break;
             }
         }
     }
 
-    
+    public bool GameIsPaused()
+    {
+        return pause;
+    }
+
     public void AddScore(int newScoreValue)
     {
         score += newScoreValue;
@@ -94,5 +118,5 @@ public class GameController : MonoBehaviour {
         gameOver = true;
     }
 
-    
+
 }

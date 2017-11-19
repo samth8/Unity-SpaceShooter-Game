@@ -21,23 +21,34 @@ public class PlayerController : MonoBehaviour
     public Transform shotSpawn;
     public float fireRate;
     private float nextFire;
-    
+    private GameController gameController;
 
     void Start()
     {
         audioscource = GetComponent<AudioSource>();
+
+
+
+
+        GameObject gameControllerObject = GameObject.FindWithTag("GameController");
+        if (gameControllerObject != null)
+        {
+            gameController = gameControllerObject.GetComponent<GameController>();
+        }
+        if (gameController == null)
+            Debug.Log("Cannot find 'GameController' script");
     }
     void Update()
     {
 
-        if (Input.GetButton("Fire1") && Time.time > nextFire)
+        if (Input.GetButton("Fire1") && Time.time > nextFire && !gameController.GameIsPaused())
         {
             nextFire = Time.time + fireRate;
             Instantiate(shot, shotSpawn.position, shotSpawn.rotation);
             audioscource.Play();
         }
 
-        
+
     }
 
     void FixedUpdate()
